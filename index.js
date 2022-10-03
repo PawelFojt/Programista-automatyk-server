@@ -8,6 +8,7 @@ const postRoute = require("./routes/posts");
 const categoryRoute = require("./routes/categories");
 const multer = require("multer");
 const path = require("path");
+const { port } = require('./config');
 
 dotenv.config();
 app.use(express.json());
@@ -36,6 +37,6 @@ mongoose
   app.use("/api/posts", postRoute);
   app.use("/api/categories", categoryRoute);
   
-  app.listen("5000", () => {
-    console.log("backend is running");
+  app.listen(port, () => {
+    console.log("backend uruchomiony http://localhost:" + port);
   });
