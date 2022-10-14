@@ -11,7 +11,8 @@ const { port } = require('./config');
 require("dotenv").config();
 
 app.use(express.json());
-app.use("/images", express.static(path.join(__dirname, "/images")))
+app.use("/images", express.static(path.join(__dirname, "/images")));
+app.use(express.static(__dirname + '/public'));
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -27,14 +28,14 @@ mongoose
     }
   });
   const upload = multer({storage:storage});
-  app.post("/api/upload", upload.single("file"), (req, res) => {
+  app.post("/upload", upload.single("file"), (req, res) => {
     res.status(200).json("Plik został zapisany na serwerze");
   });
 
-  app.use("/api/auth", authRoute);
-  app.use("/api/users", userRoute);
-  app.use("/api/posts", postRoute);
-  app.use("/api/categories", categoryRoute);
+  app.use("/auth", authRoute);
+  app.use("/users", userRoute);
+  app.use("/posts", postRoute);
+  app.use("/categories", categoryRoute);
   
   app.listen(port, () => {
     console.log("backend uruchomiony http://localhost:" + port);
