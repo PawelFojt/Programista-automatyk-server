@@ -9,10 +9,10 @@ const multer = require("multer");
 const path = require("path");
 const { port } = require('./config');
 require("dotenv").config();
-
+app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.json());
 app.use("/images", express.static(path.join(__dirname, "/images")));
-app.use(express.static(__dirname + '/public'));
+
 
 mongoose
   .connect(process.env.MONGO_URL)
