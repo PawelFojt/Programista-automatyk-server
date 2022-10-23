@@ -1,23 +1,38 @@
-const express = require("express");
+import express from 'express';
+import mongoose from 'mongoose';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+import postRoutes from './routes/posts.js';
+import categoryRoutes from './routes/categories.js';
+import multer from 'multer';
+import path from 'path';
+import cors from 'cors';
+import { port } from './config.js';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+dotenv.config();
+
 const app = express();
-const mongoose = require("mongoose");
-const authRoute = require("./routes/auth");
-const userRoute = require("./routes/users");
-const postRoute = require("./routes/posts");
-const categoryRoute = require("./routes/categories");
-const multer = require("multer");
-const path = require("path");
-const { port } = require('./config');
-require("dotenv").config();
-app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.json());
-app.use("/images", express.static(path.join(__dirname, "/images")));
+app.use(bodyParser.json({ limit: "30mb", extended: true}))
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true}))
+app.use(cors());
 
+const PORT = 5000;
+const CONNECTION_URL = "mongodb+srv://Pawel:Pawel23@pawelfojt.lzqxi.mongodb.net/blog?retryWrites=true&w=majority";
 
+//Połączenie z bazą danych
 mongoose
-  .connect(process.env.MONGO_URL)
-  .then(console.log("połączono z bazą danych"))
+  .connect(CONNECTION_URL)
+  .then(() => {
+    console.log("połączono z bazą danych");
+    app.listen(port, () => {
+      console.log("backend uruchomiony http://localhost:" + PORT);
+    });
+  })
   .catch((err) => console.log(err));
+
+  
 
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -27,16 +42,14 @@ mongoose
       cb(null, req.body.name);
     }
   });
+
   const upload = multer({storage:storage});
-  app.post("/upload", upload.single("file"), (req, res) => {
+  app.post("/api/upload", upload.single("file"), (req, res) => {
     res.status(200).json("Plik został zapisany na serwerze");
   });
 
-  app.use("/auth", authRoute);
-  app.use("/users", userRoute);
-  app.use("/posts", postRoute);
-  app.use("/categories", categoryRoute);
+  app.use("/auth", authRoutes);
+  app.use("/users", userRoutes);
+  app.use("/posts", postRoutes);
+  app.use("/categories", categoryRoutes);
   
-  app.listen(port, () => {
-    console.log("backend uruchomiony http://localhost:" + port);
-  });
