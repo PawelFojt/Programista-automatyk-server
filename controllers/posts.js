@@ -1,5 +1,8 @@
 import Post from '../models/Post.js';
+import { unlink } from 'node:fs/promises';
+import { __dirname } from '../index.js';
 
+//GET POSTS
 export const getPosts = async (req,res)=>{
   const username = req.query.user;
   const categoryName = req.query.cat;
@@ -16,10 +19,12 @@ export const getPosts = async (req,res)=>{
     }
     res.status(200).json(posts);
   }catch(err){
-    res.status(500).json(err)
+    res.status(404).json(err)
   }
 };
 
+
+//GET POST
 export const getPost = async (req,res)=>{
   try{
     const post = await Post.findById(req.params.id);
@@ -29,24 +34,18 @@ export const getPost = async (req,res)=>{
   }
 };
 
-export const deletePost = async (req,res) => {
+//CREATE POST
+export const createPost = async (req,res) => {
+  const newPost = new Post(req.body);
   try{
-    const post = await Post.findById(req.params.id);
-    if(post.username === req.body.username){
-      try{
-        await post.delete()
-        res.status(200).json("Post został usunięty!");
-      }catch(err){
-        res.status(404).json({ message: err.message });
-      }
-    }else {
-      res.status(401).json("Możesz usuwać tylko swoje posty!")
-    }
-  } catch(err){
-    res.status(404).json({ message: err.message });
+    const savedPost = await newPost.save();
+    res.status(201).json(savedPost);
+  }catch(err){
+    res.status(409).json(err);
   }
 };
 
+//UPDATE POST
 export const updatePost = async (req,res) => {
   try{
     const post = await Post.findById(req.params.id);
@@ -60,22 +59,35 @@ export const updatePost = async (req,res) => {
         );
         res.status(200).json(updatedPost);
       }catch(err){
-        res.status(404).json({ message: err.message });
+        res.status(404).json(err);
       }
     }else {
-      res.status(401).json("Możesz aktualizować tylko swoje posty!")
+      res.status(401).json("Możesz aktualizować tylko swoje posty!");
     }
   } catch(err){
-    res.status(404).json({ message: err.message });
+    res.status(404).json(err);
   }
 };
 
-export const createPost = async (req,res) => {
-  const newPost = new Post(req.body);
+//DELETE POST
+export const deletePost = async (req,res) => {
   try{
-    const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
-  }catch(err){
-    res.status(409).json({ message: err.message });
+    const post = await Post.findById(req.params.id);
+    if(post.username === req.body.username){
+      try{
+        await post.delete();
+        await unlink(__dirname + "/images/" + post.photo);
+        res.status(200).json("Post został usunięty!");
+      }catch(err){
+        res.status(404).json({ message: err.message });
+      }
+    }else {
+      res.status(401).json("Możesz usuwać tylko swoje posty!")
+    }
+  } catch(err){
+    res.status(404).json(err);
   }
 };
+
+
+

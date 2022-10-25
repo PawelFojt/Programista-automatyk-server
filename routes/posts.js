@@ -3,19 +3,19 @@ import { getPosts, getPost, deletePost, updatePost, createPost } from '../contro
 
 const router = express.Router();
 
+//GET ALL POSTS
+router.get("/", getPosts);
+
 //CREATE POST
 router.post("/", createPost);
 
 //UPDETE POST
-router.put("/:id", updatePost);
+router.patch("/:id", updatePost);
 
 //DETELE POST
 router.delete("/:id", deletePost);
 
 //GET POST
 router.get("/:id", getPost);
-
-//GET ALL POSTS
-router.get("/", getPosts);
 
 export default router;
