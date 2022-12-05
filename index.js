@@ -7,8 +7,8 @@ import categoryRoutes from './routes/categories.js';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import cors from 'cors';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 
 
@@ -19,8 +19,9 @@ const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 
 
-app.use(bodyParser.json({limit: '16mb'}));
+app.use(bodyParser.json({limit: '16mb', extended: true}));
 app.use(bodyParser.urlencoded({limit: '16mb', extended: true}));
+app.use(cors());
 app.get('/', (req, res) => {
   res.send('serwer uruchomiony!');
 });

@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PawelFojt/programista-automatyk-backend.git"
+    "url": "git+https://github.com/PawelFojt/Programista-automatyk-server.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PawelFojt/programista-automatyk-backend/issues"
+    "url": "https://github.com/PawelFojt/Programista-automatyk-server.git/issues"
   },
-  "homepage": "https://github.com/PawelFojt/programista-automatyk-backend#readme",
+  "homepage": "https://github.com/PawelFojt/Programista-automatyk-server.git#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.1",
