@@ -21,6 +21,9 @@ export const __dirname = path.dirname(__filename);
 
 app.use(bodyParser.json({limit: '16mb'}));
 app.use(bodyParser.urlencoded({limit: '16mb', extended: true}));
+app.get('/', (req, res) => {
+  res.send('serwer uruchomiony!');
+});
 
 const PORT = process.env.PORT || 5000;
 //MongoDB connection
