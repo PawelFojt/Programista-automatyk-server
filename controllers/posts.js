@@ -23,7 +23,6 @@ export const getPosts = async (req,res)=>{
   }
 };
 
-
 //GET POST
 export const getPost = async (req,res)=>{
   try{
@@ -57,6 +56,7 @@ export const updatePost = async (req,res) => {
           },
           { new: true }
         );
+        post.photo ? await unlink(__dirname + "/images/" + post.photo) : null;
         res.status(200).json(updatedPost);
       }catch(err){
         res.status(404).json(err);
@@ -76,10 +76,10 @@ export const deletePost = async (req,res) => {
     if(post.username === req.body.username){
       try{
         await post.delete();
-        await unlink(__dirname + "/images/" + post.photo);
+        post.photo ? await unlink(__dirname + "/images/" + post.photo) : null;
         res.status(200).json("Post został usunięty!");
       }catch(err){
-        res.status(404).json({ message: err.message });
+        res.status(404).json({ err });
       }
     }else {
       res.status(401).json("Możesz usuwać tylko swoje posty!")

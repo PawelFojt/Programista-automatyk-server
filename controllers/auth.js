@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 
-//REGISTER CONTROLLER
+//REGISTER
 
 export const registerAuth = async (req,res) => {
   try{
@@ -19,7 +19,7 @@ export const registerAuth = async (req,res) => {
   }
 };
 
-//LOGIN CONTROLLER
+//LOGIN 
 
 export const loginAuth = async (req, res) => {
   try {

@@ -8,9 +8,9 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
-import { port } from './config.js';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+
 
 dotenv.config();
 
@@ -19,20 +19,16 @@ const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 
 
-app.use(express.json());
-app.use(bodyParser.json({ limit: "30mb", extended: true}))
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true}))
-app.use(cors());
+app.use(bodyParser.json({limit: '16mb'}));
+app.use(bodyParser.urlencoded({limit: '16mb', extended: true}));
 
-const PORT = 5000;
-const CONNECTION_URL = "mongodb+srv://Pawel:Pawel23@pawelfojt.lzqxi.mongodb.net/blog?retryWrites=true&w=majority";
-
+const PORT = process.env.PORT || 5000;
 //MongoDB connection
 mongoose
-  .connect(CONNECTION_URL)
+  .connect(process.env.CONNECTION_URL)
   .then(() => {
     console.log("połączono z bazą danych");
-    app.listen(port, () => {
+    app.listen(PORT, () => {
       console.log("backend uruchomiony http://localhost:" + PORT);
     });
   })

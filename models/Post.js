@@ -16,7 +16,7 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     categories: {
-      type: [],
+      type: [String],
       required: false,
     },
     photo: {

@@ -13,8 +13,7 @@ export const updateUser = async (req,res) => {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
       }
-  
-      user.profilePic && await unlink(__dirname + "/images/" + user.profilePic);
+     
       try{
         const updatedUser = await User.findByIdAndUpdate(
           req.params.id, 
@@ -22,7 +21,7 @@ export const updateUser = async (req,res) => {
           {new:true});
           
           res.status(200).json(updatedUser);
-          
+          user.profilePic ? await unlink(__dirname + "/images/" + user.profilePic) : null;
         } catch(err){
           res.status(404).json(err);
           console.log(err);
@@ -34,6 +33,8 @@ export const updateUser = async (req,res) => {
       console.log(err);
     }
 };
+ 
+//DELETE USER
 
 export const deleteUser = async (req,res) => {
   try {
@@ -43,7 +44,7 @@ export const deleteUser = async (req,res) => {
     if(user.id === req.params.id) {
       try{
         await User.findByIdAndDelete(req.params.id);
-        user.profilePic && await unlink(__dirname + "/images/" + user.profilePic);
+        user.profilePic ? await unlink(__dirname + "/images/" + user.profilePic) : null;
         res.status(200).json("Usunięto pomyślnie...");
       } catch(err){
         res.status(404).json(err);
@@ -56,6 +57,7 @@ export const deleteUser = async (req,res) => {
   }
 };
 
+//GET USER
 export const getUser = async (req,res)=>{
   try{
     const user = await User.findById(req.params.id);
