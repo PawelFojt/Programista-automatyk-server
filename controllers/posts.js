@@ -1,6 +1,6 @@
 import Post from '../models/Post.js';
-import { unlink } from 'node:fs/promises';
 import { __dirname } from '../index.js';
+import AWS from 'aws-sdk';
 
 //GET POSTS
 export const getPosts = async (req,res)=>{
@@ -17,6 +17,7 @@ export const getPosts = async (req,res)=>{
     } else{
       posts = await Post.find();
     }
+   
     res.status(200).json(posts);
   }catch(err){
     res.status(404).json(err)
@@ -56,7 +57,17 @@ export const updatePost = async (req,res) => {
           },
           { new: true }
         );
-        post.photo ? await unlink(__dirname + "/images/" + post.photo) : null;
+        //delete post photo
+        const deletePhoto = async () => {
+          const s3 = new AWS.S3();
+          console.log(process.env.AWS_BUCKET_NAME);
+          await s3.deleteObject({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `uploads/${post.photo}`
+          },function (err,data){
+          })
+        }
+        post.photo && deletePhoto();
         res.status(200).json(updatedPost);
       }catch(err){
         res.status(404).json(err);
@@ -75,8 +86,18 @@ export const deletePost = async (req,res) => {
     const post = await Post.findById(req.params.id);
     if(post.username === req.body.username){
       try{
+        //delete post photo
+        const deletePhoto = async () => {
+          const s3 = new AWS.S3();
+          console.log(process.env.AWS_BUCKET_NAME);
+          await s3.deleteObject({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `uploads/${post.photo}`
+          },function (err,data){
+          })
+        }
+        post.photo && deletePhoto();
         await post.delete();
-        post.photo ? await unlink(__dirname + "/images/" + post.photo) : null;
         res.status(200).json("Post został usunięty!");
       }catch(err){
         res.status(404).json({ err });

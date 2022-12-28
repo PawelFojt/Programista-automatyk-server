@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
-import { unlink } from 'node:fs/promises';
 import { __dirname } from '../index.js';
+import AWS from 'aws-sdk';
 
 //UPDATE USER
 
@@ -21,7 +21,16 @@ export const updateUser = async (req,res) => {
           {new:true});
           
           res.status(200).json(updatedUser);
-          user.profilePic ? await unlink(__dirname + "/images/" + user.profilePic) : null;
+           //delete profile pic
+        const deletePhoto = async () => {
+          const s3 = new AWS.S3();
+          await s3.deleteObject({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `uploads/${user.profilePic}`
+          },function (err,data){
+          })
+        }
+        user.profilePic && deletePhoto();
         } catch(err){
           res.status(404).json(err);
           console.log(err);
@@ -44,7 +53,17 @@ export const deleteUser = async (req,res) => {
     if(user.id === req.params.id) {
       try{
         await User.findByIdAndDelete(req.params.id);
-        user.profilePic ? await unlink(__dirname + "/images/" + user.profilePic) : null;
+        //delete profile pic
+        const deletePhoto = async () => {
+          const s3 = new AWS.S3();
+          console.log(process.env.AWS_BUCKET_NAME);
+          await s3.deleteObject({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `uploads/${user.profilePic}`
+          },function (err,data){
+          })
+        }
+        user.profilePic && deletePhoto();
         res.status(200).json("Usunięto pomyślnie...");
       } catch(err){
         res.status(404).json(err);
