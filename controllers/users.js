@@ -19,9 +19,7 @@ export const updateUser = async (req,res) => {
           req.params.id, 
           {$set: req.body}, 
           {new:true});
-          
-          res.status(200).json(updatedUser);
-           //delete profile pic
+          //delete profile pic
         const deletePhoto = async () => {
           const s3 = new AWS.S3();
           await s3.deleteObject({
@@ -31,6 +29,8 @@ export const updateUser = async (req,res) => {
           })
         }
         user.profilePic && deletePhoto();
+          res.status(200).json(updatedUser);
+           
         } catch(err){
           res.status(404).json(err);
           console.log(err);
