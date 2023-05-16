@@ -33,7 +33,7 @@ mongoose
       console.log("backend uruchomiony http://localhost:" + PORT);
     });
   })
-  .catch((err) => console.log(err));
+  .catch((error) => console.error(error));
 
 const multer = Multer({
   storage: Multer.memoryStorage(),
