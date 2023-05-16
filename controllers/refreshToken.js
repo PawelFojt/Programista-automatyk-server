@@ -22,12 +22,12 @@ export const refreshToken = async (req, res) => {
                         email: decoded.email,
                     },
                     process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: "30s" }
+                    { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME }
                 );
                 res.json({ accessToken });
             }
         );
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };

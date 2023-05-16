@@ -43,7 +43,7 @@ export const login = async (req, res) => {
                 email: existingUser.email,
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "30s" }
+            { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME }
         );
         const refreshToken = jwt.sign(
             {
@@ -52,20 +52,22 @@ export const login = async (req, res) => {
                 email: existingUser.email,
             },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: "1d" }
+            { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME }
         );
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-            maxAge: 24 * 60 * 60 * 1000,
-        });
+        
         await User.findByIdAndUpdate(
             existingUser._id,
             { refreshToken },
             { new: true }
         );
 
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 24 * 60 * 60 * 1000,
+        });
+        
         res.json({ accessToken });
     } catch (error) {
         res.status(404).json({ msg: "Taki użytkownik nie istnieje!" });

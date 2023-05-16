@@ -25,13 +25,13 @@ export const updateUser = async (req, res) => {
                 res.status(200).json(updatedUser);
             } catch (error) {
                 res.status(404).json(error);
-                console.log(error);
+                console.error(error);
             }
         } else {
             res.status(401).json("Możesz aktualizować tylko swoje konto!");
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
@@ -45,14 +45,14 @@ export const deleteUser = async (req, res) => {
                 await User.findByIdAndDelete(req.params.id);
                 user.profilePic && deleteFromGCS(user.profilePic);
                 res.status(200).json("Usunięto pomyślnie...");
-            } catch (err) {
-                res.status(404).json(err);
+            } catch (error) {
+                res.status(404).json(error);
             }
         } else {
             res.status(401).json("Możesz usunąć tylko swoje konto!");
         }
-    } catch (err) {
-        console.log(err);
+    } catch (error) {
+        console.error(error);
     }
 };
 
@@ -62,7 +62,7 @@ export const getUser = async (req, res) => {
         const user = await User.findById(req.params.id);
         const { password, ...others } = user._doc;
         res.status(200).json(others);
-    } catch (err) {
-        res.status(500).json(err);
+    } catch (error) {
+        res.status(500).json(error);
     }
 };
